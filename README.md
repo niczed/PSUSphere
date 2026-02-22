@@ -14,4 +14,4 @@ PSUSphere is a Django-based system for managing student organizations, colleges,
 
 ## Authors
 - Edbert S. Isabelo
-- Jonard Laurence B. Ganesog
+- Jonard Laurence B. Ganeso
