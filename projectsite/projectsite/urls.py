@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from studentorg.views import HomePageView, OrganizationList, OrganizationCreateView, OrganizationUpdateView, OrganizationDeleteView, ProgramList, ProgramCreateView, ProgramUpdateView, ProgramDeleteView
+from studentorg.views import HomePageView, OrganizationList, OrganizationCreateView, OrganizationUpdateView, OrganizationDeleteView, CollegeList, CollegeCreateView, CollegeUpdateView, CollegeDeleteView, ProgramList, ProgramCreateView, ProgramUpdateView, ProgramDeleteView, StudentList, StudentCreateView, StudentUpdateView, StudentDeleteView
 from studentorg import views
 from studentorg.OrgMember_View import OrgMemberList, OrgMemberCreateView, OrgMemberUpdateView, OrgMemberDeleteView
 
@@ -28,10 +28,18 @@ urlpatterns = [
     path('organization_list/add', OrganizationCreateView.as_view(), name='organization-add'),
     path('organization_list/<pk>',OrganizationUpdateView.as_view(), name='organization-update'),
    path('organization_list/<pk>/delete', OrganizationDeleteView.as_view(), name='organization-delete'),
+    path('college_list', CollegeList.as_view(), name='college-list'),
+    path('college_list/add', CollegeCreateView.as_view(), name='college-add'),
+    path('college_list/<pk>', CollegeUpdateView.as_view(), name='college-update'),
+    path('college_list/<pk>/delete', CollegeDeleteView.as_view(), name='college-delete'),
     path('program_list', ProgramList.as_view(), name='program-list'),
     path('program_list/add', ProgramCreateView.as_view(), name='program-add'),
     path('program_list/<pk>', ProgramUpdateView.as_view(), name='program-update'),
     path('program_list/<pk>/delete', ProgramDeleteView.as_view(), name='program-delete'),
+    path('student_list', StudentList.as_view(), name='student-list'),
+    path('student_list/add', StudentCreateView.as_view(), name='student-add'),
+    path('student_list/<pk>', StudentUpdateView.as_view(), name='student-update'),
+    path('student_list/<pk>/delete', StudentDeleteView.as_view(), name='student-delete'),
 
     path('orgmember/',OrgMemberList.as_view(), name='orgmember-list'),
     path('orgmember/add', OrgMemberCreateView.as_view(), name='orgmember-add'),
