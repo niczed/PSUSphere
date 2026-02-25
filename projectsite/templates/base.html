@@ -1,4 +1,4 @@
-{% load static %}
+﻿{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
@@ -137,7 +137,7 @@
 						</div>
 						<div class="info">
 							<a class="" data-toggle="collapse" href="#collapseExample" aria-expanded="true">
-								<span>
+								<span>	
 									Hizrian
 									<span class="user-level">Administrator</span>
 									<span class="caret"></span>
@@ -180,7 +180,7 @@
 							</a>
 						</li>
 						<li class="nav-item">
-							<a href="forms.html">
+							<a href="{% url 'orgmember-list' %}">
 								<i class="la la-keyboard-o"></i>
 								<p>Org. Members</p>
 							</a>
