@@ -50,6 +50,8 @@ class HomePageView(SearchableListView) :
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["total_students"] = Student.objects.count()
+        context["total_organizations"] = Organization.objects.count()
+        context["total_programs"] = Program.objects.count()
 
         today = timezone.now().date()
         count = (
@@ -201,6 +203,16 @@ class OrgMemberList(SearchableListView):
         "organization__name",
         "organization__college__college_name",
     )
+
+    def get_ordering(self):
+        ordering_map = {
+            "student_name": ("student__lastname", "student__firstname"),
+            "student_name_desc": ("-student__lastname", "-student__firstname"),
+            "date_joined": ("date_joined",),
+            "date_joined_desc": ("-date_joined",),
+        }
+        sort_by = self.request.GET.get("sort_by")
+        return ordering_map.get(sort_by, ("student__lastname", "student__firstname"))
 
 
 class OrgMemberCreateView(CreateView):

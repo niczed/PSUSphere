@@ -15,6 +15,9 @@
                             <form method="get" class="navbar-left navbar-form nav-search mr-md-3" action="{% url 'orgmember-list' %}">
                                 <div class="input-group">
                                     <input type="text" placeholder="Search ..." class="form-control" name="q" value="{{ q }}" />
+                                    {% if request.GET.sort_by %}
+                                    <input type="hidden" name="sort_by" value="{{ request.GET.sort_by }}">
+                                    {% endif %}
                                     <div class="input-group-append">
                                         <span class="input-group-text">
                                             <i class="la la-search search-icon"></i>
@@ -27,6 +30,27 @@
                             <div class="pull-right">
                                 <a href="{% url 'orgmember-add' %}" class="btn btn-success btn-rounded">Add Org Member</a>
                             </div>
+                        </div>
+                        <div class="col-md-12">
+                            <form method="get" class="row g-2 align-items-center">
+                                <div class="col-auto">
+                                    <label for="orgMemberSortSelect" class="col-form-label">Sort by</label>
+                                </div>
+                                <div class="col-auto">
+                                    {% if q %}
+                                    <input type="hidden" name="q" value="{{ q }}">
+                                    {% endif %}
+                                    <select class="form-control form-control-sm" id="orgMemberSortSelect" name="sort_by">
+                                        <option value="student_name" {% if request.GET.sort_by == "student_name" %}selected{% endif %}>Student Name (A-Z)</option>
+                                        <option value="student_name_desc" {% if request.GET.sort_by == "student_name_desc" %}selected{% endif %}>Student Name (Z-A)</option>
+                                        <option value="date_joined" {% if request.GET.sort_by == "date_joined" %}selected{% endif %}>Date Joined (Oldest)</option>
+                                        <option value="date_joined_desc" {% if request.GET.sort_by == "date_joined_desc" %}selected{% endif %}>Date Joined (Newest)</option>
+                                    </select>
+                                </div>
+                                <div class="col-auto">
+                                    <button type="submit" class="btn btn-primary btn-sm btn-rounded">Sort</button>
+                                </div>
+                            </form>
                         </div>
                     </div>
                     <div class="card-body">
