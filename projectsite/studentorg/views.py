@@ -13,10 +13,39 @@ from django.urls import reverse_lazy
 from django.db.models import Q 
 from django.utils import timezone
 
-class HomePageView(ListView) :
+class SearchableListView(ListView):
+    search_param = "q"
+    search_fields = ()
+
+    def get_search_query(self):
+        return self.request.GET.get(self.search_param, "").strip()
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        query = self.get_search_query()
+
+        if query and self.search_fields:
+            search_filter = Q()
+            for field in self.search_fields:
+                search_filter |= Q(**{f"{field}__icontains": query})
+            qs = qs.filter(search_filter).distinct()
+        return qs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["q"] = self.get_search_query()
+
+        params = self.request.GET.copy()
+        params.pop("page", None)
+        context["query_params"] = params.urlencode()
+        return context
+
+
+class HomePageView(SearchableListView) :
     model = Organization
     context_object_name = 'home'
     template_name = "home.html"
+    search_fields = ("name", "description", "college__college_name")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -35,23 +64,13 @@ class HomePageView(ListView) :
         context["students_joined_this_year"] = count
         return context
 
-class OrganizationList(ListView):
+class OrganizationList(SearchableListView):
     model = Organization
     context_object_name = 'organization'
     template_name = 'org_list.html'
     paginate_by = 5
     ordering = ["college__college_name","name"]
-
-    def get_queryset(self):
-        qs = super().get_queryset()
-        query = self.request.GET.get('q')
-
-        if query:
-            qs = qs.filter(
-                Q(name__icontains=query) |
-                Q(description__icontains=query)
-            )
-        return qs
+    search_fields = ("name", "description", "college__college_name")
 
 class OrganizationCreateView(CreateView):
     model = Organization
@@ -71,11 +90,12 @@ class OrganizationDeleteView(DeleteView):
     success_url = reverse_lazy('organization-list')
 
 
-class CollegeList(ListView):
+class CollegeList(SearchableListView):
     model = College
     context_object_name = 'colleges'
     template_name = 'college_list.html'
     paginate_by = 5
+    search_fields = ("college_name",)
 
 
 class CollegeCreateView(CreateView):
@@ -98,11 +118,12 @@ class CollegeDeleteView(DeleteView):
     success_url = reverse_lazy('college-list')
 
 
-class ProgramList(ListView):
+class ProgramList(SearchableListView):
     model = Program
     context_object_name = 'programs'
     template_name = 'program_list.html'
     paginate_by = 5
+    search_fields = ("prog_name", "college__college_name")
 
     def get_ordering(self):
         allowed = ("prog_name", "college__college_name")
@@ -132,11 +153,19 @@ class ProgramDeleteView(DeleteView):
     success_url = reverse_lazy('program-list')
 
 
-class StudentList(ListView):
+class StudentList(SearchableListView):
     model = Student
     context_object_name = 'students'
     template_name = 'student_list.html'
     paginate_by = 5
+    search_fields = (
+        "student_id",
+        "lastname",
+        "firstname",
+        "middlename",
+        "program__prog_name",
+        "program__college__college_name",
+    )
 
 
 class StudentCreateView(CreateView):
@@ -159,11 +188,19 @@ class StudentDeleteView(DeleteView):
     success_url = reverse_lazy('student-list')
 
 
-class OrgMemberList(ListView):
+class OrgMemberList(SearchableListView):
     model = OrgMember
     context_object_name = 'orgmembers'
     template_name = 'OrgMembers_list.html'
     paginate_by = 5
+    search_fields = (
+        "student__student_id",
+        "student__lastname",
+        "student__firstname",
+        "student__middlename",
+        "organization__name",
+        "organization__college__college_name",
+    )
 
 
 class OrgMemberCreateView(CreateView):
